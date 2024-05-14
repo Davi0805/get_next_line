@@ -1,34 +1,8 @@
 #include <fcntl.h>
+#include <stdio.h>
 #include "get_next_line.h"
 
-static char *fillline(int fd, char *result, char *buffer)
-{
-	int		nb_read;
-	char 		*temp;
-
-	nb_read = 1;
-	temp = NULL;
-	while (nb_read != 0)
-	{
-		nb_read = read(fd, buffer, BUFFER_SIZE);
-		if (nb_read == -1)
-		{
-			//free(result);
-			return (NULL);
-		}
-		else if (nb_read == 0)
-			break ;
-		buffer[nb_read] = '\0';
-		temp = result;
-		result = ft_strjoin(temp, buffer);
-		if (temp != buffer)
-			free(temp);
-		if (ft_strchr(buffer, '\n'))
-			break ;
-	}
-	return (result);
-}
-char *trims(char *result)
+/* char *trims(char *result)
 {
 	char *temp;
 	int i;
@@ -37,15 +11,17 @@ char *trims(char *result)
 		return (NULL);
 	temp = NULL;
 	i = 0;
+	//printf("%s", result);
 	while (result[i] != '\n' && result[i] != '\0')
 		i++;
-/* 	if (result[i] == '\0')
-        return (NULL); */
+// 	if (result[i] == '\0')
+//        return (NULL);
 	if (result[i] == '\n')
 	{
 		result[i + 1] = '\0';
 		temp = ft_strdup(result);
 		result[i + 1] = '\n';
+		//printf("%s", temp);
 		free(result);
 	}
 	else
@@ -54,9 +30,54 @@ char *trims(char *result)
 	}
 	return (temp);
 }
+ */
+
+static char *buffercollect(int fd, char *result, char *buffer, ssize_t *newlineindex)
+{
+	ssize_t		nb_read;
+	char 		*temp;
+	ssize_t		i;
+
+	nb_read = 1;
+	//temp = NULL;
+	while (nb_read != 0)
+	{
+		nb_read = read(fd, buffer, BUFFER_SIZE);
+		if (nb_read == -1)
+		{
+			//free(result);
+			return (NULL);
+		}
+		if (nb_read == 0)
+		{
+			break ;
+		}
+		printf("%c", buffer[nb_read]);
+		buffer[nb_read] = '\0';
+		temp = result;
+		while (*temp)
+			temp++;
+		i = 0;
+		while (i < nb_read)
+		{
+			*temp++ = buffer[i++];
+			if (buffer[i] == '\n')
+			{
+				*newlineindex = temp - result;
+				break ;
+			}
+		}
+		if (ft_strchr(buffer, '\n'))
+			break ;
+	}
+	//printf("%s", result);
+	return (result);
+}
+
 char *get_next_line(int fd)
 {
-	static char *result = NULL;
+	static char *result;
+	static ssize_t newlineindex = 0;
 	char *buffer;
 	char *temp;
 	char *newline_pos;
@@ -71,20 +92,20 @@ char *get_next_line(int fd)
 		return (NULL);
 	if (!result)
 		result = ft_strdup("");
-	temp = fillline(fd, result, buffer);
-	if (result != buffer)
-		free(buffer);
+	temp = buffercollect(fd, result, buffer, &newlineindex);
+	free(buffer);
 	newline_pos = ft_strchr(temp, '\n');
 	if (newline_pos)
 	{
 		*newline_pos = '\0';
 		result = ft_strdup(newline_pos + 1);
+		newlineindex = 0;
 	}
 	else
 	{
 		result = NULL;
 	}
-	return (temp);
+	return (ft_substr(temp, 0, newlineindex));
 }
 /* char    *get_next_line(int fd)
 {
@@ -100,7 +121,7 @@ char *get_next_line(int fd)
 	}
 	if (!buffer)
 		return (NULL);
-	temp = fillline(fd, result, buffer);
+	temp = buffercollect(fd, result, buffer);
 	if (result != buffer)
 		free(buffer);
 	result = trims(temp);

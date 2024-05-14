@@ -74,3 +74,26 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	resultado[j] = '\0';
 	return (resultado);
 }
+
+char	*ft_substr(char const *s, unsigned int start, size_t len)
+{
+	size_t	i;
+	char	*resultado;
+
+	i = 0;
+	if (!s)
+		return (NULL);
+	if (start > ft_strlen(s))
+		return (ft_strdup(""));
+	if (len > ft_strlen(s + start))
+		len = ft_strlen(s + start);
+	resultado = ft_calloc((len + 1), sizeof(char));
+	if (resultado == NULL)
+		return (NULL);
+	while (i < len)
+	{
+		resultado[i] = s[start + i];
+		i++;
+	}
+	return (resultado);
+}
