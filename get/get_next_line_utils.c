@@ -70,7 +70,9 @@ char	*ft_strjoin(char const *s1, char const *s2)
 		resultado[j++] = s1[i++];
 	i = 0;
 	while (s2[i])
+	{
 		resultado[j++] = s2[i++];
+	}
 	resultado[j] = '\0';
 	return (resultado);
 }
