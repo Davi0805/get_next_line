@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "get_next_line.h"
 
-/* char *trims(char *result)
+ static char *trims(char *result)
 {
 	char *temp;
 	int i;
@@ -16,27 +16,23 @@
 		i++;
 // 	if (result[i] == '\0')
 //        return (NULL);
-	if (result[i] == '\n')
+	if (result[i] == '\0' || result[1] == '\0')
+		return (NULL);
+	temp = ft_substr(result, i + 1, ft_strlen(result) - i);
+	if (*temp == '\0')
 	{
-		result[i + 1] = '\0';
-		temp = ft_strdup(result);
-		result[i + 1] = '\n';
-		//printf("%s", temp);
-		free(result);
+		free(temp);
+		temp = NULL;
 	}
-	else
-	{
-		return result;
-	}
+	temp[i + 1] = '\0';
 	return (temp);
 }
- */
+ 
 
-static char *buffercollect(int fd, char *result, char *buffer, ssize_t *newlineindex)
+static char *buffercollect(int fd, char *result, char *buffer)
 {
 	ssize_t		nb_read;
 	char 		*temp;
-	ssize_t		i;
 
 	nb_read = 1;
 	//temp = NULL;
@@ -45,28 +41,20 @@ static char *buffercollect(int fd, char *result, char *buffer, ssize_t *newlinei
 		nb_read = read(fd, buffer, BUFFER_SIZE);
 		if (nb_read == -1)
 		{
-			//free(result);
+			free(result);
 			return (NULL);
 		}
-		if (nb_read == 0)
+		else if (nb_read == 0)
 		{
 			break ;
 		}
-		printf("%c", buffer[nb_read]);
 		buffer[nb_read] = '\0';
+		if (!result)
+			result = ft_strdup("");
 		temp = result;
-		while (*temp)
-			temp++;
-		i = 0;
-		while (i < nb_read)
-		{
-			*temp++ = buffer[i++];
-			if (buffer[i] == '\n')
-			{
-				*newlineindex = temp - result;
-				break ;
-			}
-		}
+		result = ft_strjoin(temp, buffer);
+		free(temp);
+		temp = NULL;
 		if (ft_strchr(buffer, '\n'))
 			break ;
 	}
@@ -77,35 +65,28 @@ static char *buffercollect(int fd, char *result, char *buffer, ssize_t *newlinei
 char *get_next_line(int fd)
 {
 	static char *result;
-	static ssize_t newlineindex = 0;
 	char *buffer;
 	char *temp;
-	char *newline_pos;
 
 	buffer = (char *)malloc((BUFFER_SIZE + 1) * sizeof(char));
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
 	{
 		free(buffer);
+		free(result);
+		result = NULL;
+		temp = NULL;
+		buffer = NULL;
 		return (NULL);
 	}
 	if (!buffer)
 		return (NULL);
-	if (!result)
-		result = ft_strdup("");
-	temp = buffercollect(fd, result, buffer, &newlineindex);
+	temp = buffercollect(fd, result, buffer);
 	free(buffer);
-	newline_pos = ft_strchr(temp, '\n');
-	if (newline_pos)
-	{
-		*newline_pos = '\0';
-		result = ft_strdup(newline_pos + 1);
-		newlineindex = 0;
-	}
-	else
-	{
-		result = NULL;
-	}
-	return (ft_substr(temp, 0, newlineindex));
+	buffer = NULL;
+	if (!temp)
+		return (NULL);
+	result = trims(temp);
+	return (temp);
 }
 /* char    *get_next_line(int fd)
 {
