@@ -2,45 +2,25 @@
 #include <stdio.h>
 #include "get_next_line.h"
 
-void	*ft_calloc(size_t nitems, size_t size)
-{
-	char	*resultado;
-	size_t	n;
-
-	n = nitems * size;
-	resultado = (char *)malloc(nitems * size);
-	if (resultado == NULL)
-	{
-		return (NULL);
-	}
-		while (n > 0)
-	{
-		*resultado = 0;
-		resultado++;
-		n--;
-	}
-	return (resultado);
-}
-
  static char *trims(char *result)
 {
 	char *temp;
-	int i;
+	ssize_t i;
 
 /* 	if (!result)
 		return (NULL); */
-	temp = NULL;
 	i = 0;
 	while (result[i] != '\n' && result[i] != '\0')
 		i++;
 	if (result[i] == '\0' || result[1] == '\0')
 		return (NULL);
 	temp = ft_substr(result, i + 1, ft_strlen(result) - i);
-	if (!temp)
+	if (*temp == '\0')
 	{
 		free(temp);
 		temp = NULL;
 	}
+	result[i + 1] = '\0';
 	//temp[i + 1] = '\0';
 	/* if (result[i] == '\n')
 		result[i + 1] = '\0'; */
@@ -54,7 +34,7 @@ static char *buffercollect(int fd, char *result, char *buffer)
 	char 		*temp;
 
 	nb_read = 1;
-	while (nb_read != 0)
+	while (nb_read > 0)
 	{
 		nb_read = read(fd, buffer, BUFFER_SIZE);
 		if (nb_read == -1)
@@ -91,9 +71,8 @@ char *get_next_line(int fd)
 	char *buffer;
 	char *temp;
 
-	//temp = NULL;
 	buffer = (char *)malloc((BUFFER_SIZE + 1) * sizeof(char));
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
 	{
 		free(buffer);
 		free(result);

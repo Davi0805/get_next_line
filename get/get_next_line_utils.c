@@ -36,7 +36,7 @@ char	*ft_strdup(const char *s)
 	return (resultado);
 }
 
-char	*ft_strchr(const char *str, int c)
+char	*ft_strchr(char *str, int c)
 {
 	unsigned int		i;
 	char	caracter;
