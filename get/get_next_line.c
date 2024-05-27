@@ -1,5 +1,5 @@
-#include <fcntl.h>
-#include <stdio.h>
+/* #include <fcntl.h>
+#include <stdio.h> */
 #include "get_next_line.h"
 
  static char *trims(char *result)
@@ -30,34 +30,32 @@
 
 static char *buffercollect(int fd, char *result, char *buffer)
 {
-	ssize_t		nb_read;
+	ssize_t		nb_count;
 	char 		*temp;
 
-	nb_read = 1;
-	while (nb_read > 0)
+	nb_count = 1;
+	while (nb_count > 0)
 	{
-		nb_read = read(fd, buffer, BUFFER_SIZE);
-		if (nb_read == -1)
+		nb_count = read(fd, buffer, BUFFER_SIZE);
+		if (nb_count == -1)
 		{
 			free(result);
 			free(buffer);
 			return (NULL);
 		}
-		else if (nb_read == 0)
+		else if (nb_count == 0)
 		{
 			break ;
 		}
-		buffer[nb_read] = '\0';
+		buffer[nb_count] = '\0';
 		if (!result)
 			result = ft_strdup("");
 		temp = result;
 		result = ft_strjoin(temp, buffer);
 		free(temp);
-		temp = NULL;
+		//temp = NULL;
 		if (ft_strchr(buffer, '\n'))
-		{
 			break ;
-		}
 	}
 	free(buffer);
 	//printf("Buffercollect - Result = %s\n", result);
@@ -77,16 +75,14 @@ char *get_next_line(int fd)
 		free(buffer);
 		free(result);
 		result = NULL;
-		buffer = NULL;
+		//buffer = NULL;
 		return (NULL);
 	}
 	if (!buffer)
 		return (NULL);
 	temp = buffercollect(fd, result, buffer);
 	if (!temp)
-	{
 		return (NULL);
-	}
 	result = trims(temp);
 	if (!result)
 		free(result);
