@@ -3,11 +3,10 @@
 
 # include <unistd.h>
 # include <stdlib.h>
-# include <limits.h>
 
-# ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 42
-# endif
+#ifndef BUFFER_SIZE
+#define BUFFER_SIZE 5
+#endif
 
 char	*ft_substr(char const *s, unsigned int start, size_t len);
 char	*ft_strdup(const char *s);
