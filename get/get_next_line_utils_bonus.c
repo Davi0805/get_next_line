@@ -1,39 +1,47 @@
-#include "get_next_line.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: davi <davi@student.42.fr>                  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/05 12:07:17 by davi              #+#    #+#             */
+/*   Updated: 2024/06/05 12:07:18 by davi             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "get_next_line_bonus.h"
 
 size_t	ft_strlen(const char *s)
 {
 	size_t	i;
 
 	i = 0;
+	if (!s)
+		return(0);
 	while (s[i])
-	{
 		i++;
-	}
 	return (i);
 }
 
 char	*ft_strdup(const char *s)
 {
-	int		len;
 	int		i;
-	char	*resultado;
+	int		j;
+	char	*str;
 
-	len = 0;
-	while (s[len])
-		len++;
-	resultado = (char *)malloc(len + 1);
 	i = 0;
-	if (!resultado)
-	{
+	j = ft_strlen(s);
+	str = (char *)malloc(sizeof(*str) * (j + 1));
+	if (!str)
 		return (NULL);
-	}
-	while (s[i])
+	while (i < j)
 	{
-		resultado[i] = s[i];
+		str[i] = s[i];
 		i++;
 	}
-	resultado[i] = '\0';
-	return (resultado);
+	str[i] = '\0';
+	return (str);
 }
 
 char	*ft_strchr(char *str, int c)
@@ -42,6 +50,8 @@ char	*ft_strchr(char *str, int c)
 	char	caracter;
 
 	i = 0;
+	if (!str)
+		return (NULL);
 	caracter = (char) c;
 	while (str[i])
 	{
@@ -62,13 +72,14 @@ char	*ft_strjoin(char *s1, char *s2)
 
 	i = 0;
 	j = 0;
+	if (!s1)
+		return (ft_strdup(s2));
+	if (!s2)
+		return (ft_strdup(s1));
 	resultado = (char *)malloc(
 			(ft_strlen(s1) + ft_strlen(s2) + 1) * sizeof(char));
-	if (resultado == NULL)
-	{
-		free(s1);
+	if (!resultado)
 		return (NULL);
-	}
 	while (s1[i])
 		resultado[j++] = s1[i++];
 	i = 0;
