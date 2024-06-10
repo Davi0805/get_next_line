@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: davi <davi@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: dmelo-ca <dmelo-ca@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/05 12:07:23 by davi              #+#    #+#             */
-/*   Updated: 2024/06/05 12:07:24 by davi             ###   ########.fr       */
+/*   Updated: 2024/06/05 13:23:16 by dmelo-ca         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
 #include <fcntl.h>
-#include <stdio.h>
+//#include <stdio.h>
 
 char	*mallockiller(char *s1, char *s2)
 {
@@ -22,7 +22,7 @@ char	*mallockiller(char *s1, char *s2)
 	return (0);
 }
 
-char	*read_the_line(char *str)
+char	*before_newline(char *str)
 {
 	char	*line;
 	size_t	i;
@@ -40,9 +40,9 @@ char	*read_the_line(char *str)
 	return (line);
 }
 
-char	*get_string(char *str)
+char	*after_newline(char *str)
 {
-	char	*new_str;
+	char	*result;
 	size_t	i;
 
 	i = 0;
@@ -52,20 +52,20 @@ char	*get_string(char *str)
 		i++;
 	if (str[i] == '\n')
 		i++;
-	new_str = ft_substr (str, i, ft_strlen(str) - i);
+	result = ft_substr (str, i, ft_strlen(str) - i);
 	free(str);
-	if (!new_str[0])
+	if (!result[0])
 	{
-		free(new_str);
+		free(result);
 		return (NULL);
 	}
-	return (new_str);
+	return (result);
 }
 
-char *get_next_line(int fd)
+char	*get_next_line(int fd)
 {
-	static char *result[FD_MAX];
-	char 		*buffer;
+	static char	*result[FD_MAX];
+	char		*buffer;
 	int			nb_count;
 
 	nb_count = 1;
@@ -74,7 +74,7 @@ char *get_next_line(int fd)
 	buffer = (char *)malloc(sizeof(char) * BUFFER_SIZE + 1);
 	if (!buffer)
 		return (NULL);
- 	while(nb_count != 0 && !(ft_strchr(result[fd], '\n')))
+	while (nb_count != 0 && !(ft_strchr(result[fd], '\n')))
 	{
 		nb_count = read(fd, buffer, BUFFER_SIZE);
 		if (nb_count == -1)
@@ -86,7 +86,7 @@ char *get_next_line(int fd)
 		result[fd] = ft_strjoin(result[fd], buffer);
 	}
 	free(buffer);
-	buffer = read_the_line(result[fd]);
-	result[fd] = get_string(result[fd]);
+	buffer = before_newline(result[fd]);
+	result[fd] = after_newline(result[fd]);
 	return (buffer);
 }

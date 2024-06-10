@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: davi <davi@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: dmelo-ca <dmelo-ca@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/05 12:07:17 by davi              #+#    #+#             */
-/*   Updated: 2024/06/05 12:07:18 by davi             ###   ########.fr       */
+/*   Updated: 2024/06/05 13:26:00 by dmelo-ca         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ size_t	ft_strlen(const char *s)
 
 	i = 0;
 	if (!s)
-		return(0);
+		return (0);
 	while (s[i])
 		i++;
 	return (i);
@@ -47,7 +47,7 @@ char	*ft_strdup(const char *s)
 char	*ft_strchr(char *str, int c)
 {
 	unsigned int		i;
-	char	caracter;
+	char				caracter;
 
 	i = 0;
 	if (!str)
@@ -104,7 +104,7 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 		return (ft_strdup(""));
 	if (len > ft_strlen(s + start))
 		len = ft_strlen(s + start);
-	resultado = (char*)malloc((len + 1) * sizeof(char));
+	resultado = (char *)malloc((len + 1) * sizeof(char));
 	if (resultado == NULL)
 		return (NULL);
 	while (i < len)
